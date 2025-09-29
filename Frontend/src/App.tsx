@@ -20,22 +20,20 @@ const App = () => {
     setError(null);
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Mock response
-      setResult({
-        verdict: 'Malicious',
-        riskScore: 92,
-        details: [
-          'Uses IP Address',
-          'Contains suspicious keyword: "login"',
-          'Suspicious redirect patterns detected',
-          'No valid SSL certificate found'
-        ]
+      const response = await fetch('http://127.0.0.1:8000/analyze', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url }),
       });
+      if (!response.ok) {
+        throw new Error('API response was not ok');
+      }
+      const data = await response.json();
+      setResult(data);
     } catch (err) {
-      setError('Failed to analyze URL. Please try again.');
+      setError('An error occurred. Please check the URL or try again later.');
     } finally {
       setIsLoading(false);
     }
